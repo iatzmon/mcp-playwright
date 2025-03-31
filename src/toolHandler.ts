@@ -205,7 +205,8 @@ async function ensureBrowser(browserSettings?: BrowserSettings) {
     resetBrowserState();
     
     // Try one more time from scratch
-    const { viewport, userAgent, headless = false, browserType = 'chromium' } = browserSettings ?? {};
+    const { viewport, userAgent, browserType = 'chromium' } = browserSettings ?? {};
+    const headless = true;
     
     // Use the appropriate browser engine
     let browserInstance;
