@@ -94,20 +94,16 @@ export function createToolDefinitions() {
     },
     {
       name: "playwright_screenshot",
-      description: "Take a screenshot of the current page or a specific element",
+      description: "Take a screenshot of the current page. You can't perform actions based on the screenshot, use browser_snapshot for actions.",
       inputSchema: {
         type: "object",
         properties: {
-          name: { type: "string", description: "Name for the screenshot" },
-          selector: { type: "string", description: "CSS selector for element to screenshot" },
-          width: { type: "number", description: "Width in pixels (default: 800)" },
-          height: { type: "number", description: "Height in pixels (default: 600)" },
-          storeBase64: { type: "boolean", description: "Store screenshot in base64 format (default: true)" },
-          fullPage: { type: "boolean", description: "Store screenshot of the entire page (default: false)" },
-          savePng: { type: "boolean", description: "Save screenshot as PNG file (default: false)" },
-          downloadsDir: { type: "string", description: "Custom downloads directory path (default: user's Downloads folder)" },
+          raw: {
+            type: "boolean",
+            description: "Whether to return without compression (in PNG format). Default is false, which returns a JPEG image."
+          }
         },
-        required: ["name"],
+        required: [], // No required properties
       },
     },
     {

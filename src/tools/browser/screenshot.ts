@@ -1,77 +1,46 @@
-import fs from 'node:fs';
-import * as path from 'node:path';
-import * as os from 'node:os';
 import type { Page } from 'playwright';
 import { BrowserToolBase } from './base.js';
-import { ToolContext, ToolResponse, createSuccessResponse } from '../common/types.js';
-
-const defaultDownloadsPath = path.join(os.homedir(), 'Downloads');
+import { ToolContext, ToolResponse } from '../common/types.js'; // Removed createSuccessResponse as we won't return text
 
 /**
- * Tool for taking screenshots of pages or elements
+ * Tool for taking screenshots, mimicking playwright-alt's browser_take_screenshot.
+ * Returns only the image data.
  */
 export class ScreenshotTool extends BrowserToolBase {
-  private screenshots = new Map<string, string>();
 
   /**
-   * Execute the screenshot tool
+   * Execute the screenshot tool.
+   * @param args Arguments, expecting an optional 'raw' boolean.
+   * @param context Tool context containing the page.
    */
-  async execute(args: any, context: ToolContext): Promise<ToolResponse> {
+  async execute(args: { raw?: boolean }, context: ToolContext): Promise<ToolResponse> {
     return this.safeExecute(context, async (page) => {
+      const isRaw = args.raw === true;
+      const screenshotType = isRaw ? 'png' : 'jpeg';
+      const mimeType = isRaw ? 'image/png' : 'image/jpeg';
+
+      // Screenshot options: default to full page, adjust quality for jpeg
       const screenshotOptions: any = {
-        type: args.type || "png",
-        fullPage: !!args.fullPage
+        type: screenshotType,
+        fullPage: true, // Defaulting to full page, similar to how snapshot works
+        scale: 'css', // Use CSS pixels
+        ...(screenshotType === 'jpeg' && { quality: 80 }), // Reasonable quality for JPEG
       };
 
-      if (args.selector) {
-        const element = await page.$(args.selector);
-        if (!element) {
-          return {
-            content: [{
-              type: "text",
-              text: `Element not found: ${args.selector}`,
-            }],
-            isError: true
-          };
-        }
-        screenshotOptions.element = element;
-      }
+      const screenshotBuffer = await page.screenshot(screenshotOptions);
+      const base64Screenshot = screenshotBuffer.toString('base64');
 
-      // Generate output path
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `${args.name || 'screenshot'}-${timestamp}.png`;
-      const downloadsDir = args.downloadsDir || defaultDownloadsPath;
-
-      if (!fs.existsSync(downloadsDir)) {
-        fs.mkdirSync(downloadsDir, { recursive: true });
-      }
-
-      const outputPath = path.join(downloadsDir, filename);
-      screenshotOptions.path = outputPath;
-
-      const screenshot = await page.screenshot(screenshotOptions);
-      const base64Screenshot = screenshot.toString('base64');
-
-      const messages = [`Screenshot saved to: ${path.relative(process.cwd(), outputPath)}`];
-
-      // Handle base64 storage
-      if (args.storeBase64 !== false) {
-        this.screenshots.set(args.name || 'screenshot', base64Screenshot);
-        this.server.notification({
-          method: "notifications/resources/list_changed",
-        });
-
-        messages.push(`Screenshot also stored in memory with name: '${args.name || 'screenshot'}'`);
-      }
-
-      return createSuccessResponse(messages);
+      // Return only the image content, no text confirmation
+      return {
+        content: [{
+          type: 'image',
+          data: base64Screenshot,
+          mimeType: mimeType,
+        }],
+        isError: false,
+      };
     });
   }
 
-  /**
-   * Get all stored screenshots
-   */
-  getScreenshots(): Map<string, string> {
-    return this.screenshots;
-  }
-} 
+  // Removed getScreenshots method as we no longer store them
+}

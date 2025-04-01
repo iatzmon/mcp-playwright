@@ -572,9 +572,4 @@ export function getConsoleLogs(): string[] {
   return consoleLogsTool?.getConsoleLogs() ?? [];
 }
 
-/**
- * Get screenshots
- */
-export function getScreenshots(): Map<string, string> {
-  return screenshotTool?.getScreenshots() ?? new Map();
-} 
+// Removed getScreenshots function as the tool no longer stores them

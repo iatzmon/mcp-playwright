@@ -6,7 +6,7 @@ import {
   CallToolRequestSchema,
   Tool
 } from "@modelcontextprotocol/sdk/types.js";
-import { handleToolCall, getConsoleLogs, getScreenshots } from "./toolHandler.js";
+import { handleToolCall, getConsoleLogs } from "./toolHandler.js"; // Removed getScreenshots
 
 export function setupRequestHandlers(server: Server, tools: Tool[]) {
   // List resources handler
@@ -17,11 +17,7 @@ export function setupRequestHandlers(server: Server, tools: Tool[]) {
         mimeType: "text/plain",
         name: "Browser console logs",
       },
-      ...Array.from(getScreenshots().keys()).map(name => ({
-        uri: `screenshot://${name}`,
-        mimeType: "image/png",
-        name: `Screenshot: ${name}`,
-      })),
+      // Removed screenshot resource listing
     ],
   }));
 
@@ -39,20 +35,7 @@ export function setupRequestHandlers(server: Server, tools: Tool[]) {
       };
     }
 
-    if (uri.startsWith("screenshot://")) {
-      const name = uri.split("://")[1];
-      const screenshot = getScreenshots().get(name);
-      if (screenshot) {
-        return {
-          contents: [{
-            uri,
-            mimeType: "image/png",
-            blob: screenshot,
-          }],
-        };
-      }
-    }
-
+    // Removed screenshot resource reading logic
     throw new Error(`Resource not found: ${uri}`);
   });
 
