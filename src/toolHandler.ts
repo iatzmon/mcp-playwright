@@ -17,7 +17,8 @@ import {
   ConsoleLogsTool,
   ExpectResponseTool,
   AssertResponseTool,
-  CustomUserAgentTool
+  CustomUserAgentTool,
+  SnapshotTool // Added import
 } from './tools/browser/index.js';
 import {
   ClickTool,
@@ -87,6 +88,7 @@ let goForwardTool: GoForwardTool;
 let dragTool: DragTool;
 let pressKeyTool: PressKeyTool;
 let saveAsPdfTool: SaveAsPdfTool;
+let snapshotTool: SnapshotTool; // Added declaration
 
 interface BrowserSettings {
   viewport?: {
@@ -296,6 +298,7 @@ function initializeTools(server: any) {
   if (!dragTool) dragTool = new DragTool(server);
   if (!pressKeyTool) pressKeyTool = new PressKeyTool(server);
   if (!saveAsPdfTool) saveAsPdfTool = new SaveAsPdfTool(server);
+  if (!snapshotTool) snapshotTool = new SnapshotTool(server); // Added initialization
 }
 
 /**
@@ -491,6 +494,8 @@ export async function handleToolCall(
         return await pressKeyTool.execute(args, context);
       case "playwright_save_as_pdf":
         return await saveAsPdfTool.execute(args, context);
+      case "playwright_snapshot": // Added case
+        return await snapshotTool.execute(args, context); // Added case
       
       default:
         return {

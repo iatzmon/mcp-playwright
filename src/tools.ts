@@ -405,6 +405,15 @@ export function createToolDefinitions() {
         required: ["outputPath"],
       },
     },
+    {
+      name: "playwright_snapshot",
+      description: "Capture accessibility snapshot of the current page, this is better than screenshot",
+      inputSchema: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+    },
   ] as const satisfies Tool[];
 }
 
@@ -428,7 +437,8 @@ export const BROWSER_TOOLS = [
   "playwright_go_forward",
   "playwright_drag",
   "playwright_press_key",
-  "playwright_save_as_pdf"
+  "playwright_save_as_pdf",
+  "playwright_snapshot"
 ];
 
 // API Request tools for conditional launch
