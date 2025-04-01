@@ -31,8 +31,8 @@
     "@playwright/browser-chromium": "1.51.1",
     "@playwright/browser-firefox": "1.51.1",
     "@playwright/browser-webkit": "1.51.1",
-    "playwright": "1.51.1",
-    "@playwright/test": "^1.51.1",
+    "playwright": "1.52.0-alpha-1743011787000",
+    "@playwright/test": "1.52.0-alpha-1743011787000",
     "uuid": "^9.0.1"
   },
   "keywords": [
