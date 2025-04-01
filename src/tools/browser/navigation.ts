@@ -1,5 +1,6 @@
 import { BrowserToolBase } from './base.js';
 import { ToolContext, ToolResponse, createSuccessResponse, createErrorResponse } from '../common/types.js';
+import { captureAccessibilitySnapshot } from './snapshot.js'; // Import snapshot helper
 import { resetBrowserState } from '../../toolHandler.js';
 
 /**
@@ -33,7 +34,9 @@ export class NavigationTool extends BrowserToolBase {
           waitUntil: args.waitUntil || "load"
         });
         
-        return createSuccessResponse(`Navigated to ${args.url}`);
+        // Capture and return snapshot after navigation
+        const snapshotString = await captureAccessibilitySnapshot(page);
+        return createSuccessResponse(snapshotString);
       } catch (error) {
         const errorMessage = (error as Error).message;
         

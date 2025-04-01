@@ -10,7 +10,7 @@ import { ToolContext, ToolResponse, createSuccessResponse, createErrorResponse }
  * @param page The Playwright Page object.
  * @returns A promise that resolves to the formatted snapshot string.
  */
-async function captureAccessibilitySnapshot(page: Page): Promise<string> {
+export async function captureAccessibilitySnapshot(page: Page): Promise<string> { // Added export
   const lines: string[] = [];
   lines.push(`- Page URL: ${page.url()}`);
   lines.push(`- Page Title: ${await page.title()}`);
